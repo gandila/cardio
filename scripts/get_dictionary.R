@@ -10,9 +10,9 @@ library(ngram)
 
 
 #reference path
-path_cardio <- "/home/gandin/cardio/"
 filein <- args[1]
-fileout <- paste0(gsub(".txt", "", basename(filein)), "_freq.txt")
+fileout <- args[2]
+#fileout <- paste0(gsub(".txt", "", basename(filein)), "_freq.txt")
 
 df <- read.table( filein, he=T, strings=F, sep="\t")
 
@@ -37,7 +37,8 @@ stopwords_it <- " a | abbia | abbiamo | abbiano | abbiate | ad | agl | agli | ai
 df$CAR_ECGM_REFERTO_cl<- sapply(df$CAR_ECGM_REFERTO_cl, function(x) 
  gsub(paste(stopwords_it, collapse = '|'), ' ', x))
 
-
+df$CAR_ECGM_REFERTO_cl[1:1000]<- sapply(df$CAR_ECGM_REFERTO_cl[1:1000], function(x) 
+ gsub(paste(stopwords_it, collapse = '|'), ' ', x))
 
 #Word stemming
 # Create complicate
@@ -56,15 +57,17 @@ frequent_terms <- freq_terms(df$CAR_ECGM_REFERTO_cl, 30)
 df$CAR_ECGM_REFERTO_len <- nchar(df$CAR_ECGM_REFERTO)
 
 #2-grams
-ng2 <- ngram(df$CAR_ECGM_REFERTO_cl, n=2)
+df$num_gram <- apply(df, 1, function (x) {
+		len <- length(unlist(strsplit(stringr::str_trim(x["CAR_ECGM_REFERTO_cl"]), '[[:blank:]]+')))
+		return(len)
+	}
+	)
+ng2 <- ngram(df$CAR_ECGM_REFERTO_cl[df$num_gram>=2], n=2)
 
 
 freq_tab <- get.phrasetable(ng2)
 
-write.table(freq_tab, file=paste0(path_cardio, "output/", fileout), quote=F, row.names=F)
-
-
-
+write.table(freq_tab[freq_tab$freq>1, ], file= fileout, quote=F, row.names=F, sep="\t")
 
 
 
