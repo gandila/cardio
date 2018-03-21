@@ -8,21 +8,21 @@ import os, sys
 import subprocess
 
 # If you want to be emailed by the system, include these in job_string:
-#PBS -M ilaria.gandin@gmail.com
+#PBS -M yourname@gmail.com
 #PBS -m abe  # (a = abort, b = begin, e = end)
 
 def randomword(length):
 	return ''.join(random.choice(string.lowercase) for i in range(length))
 
 dir=os.getcwd()
-ref_dir="/home/gandin/cardio/"
+ref_dir="~/cardio/"
 
 print "Test Script!"
 print "Current working directory:"+dir
 print "Reference file directory:"+ref_dir
 
 # Loop over your jobs
-for n in range(22, 28):
+for n in range(44, 45):
 	# Open a pipe to the qsub command.
 	stdoutput, stdinput = popen2('qsub -cwd ')
 	# Customize your options here
